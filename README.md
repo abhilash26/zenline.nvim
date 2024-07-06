@@ -11,15 +11,6 @@ A simple statusline for neovim written in lua.
 
 ### Installation
 
-## Pckr (Spiritual successor of packer)
-```lua
-  { "abhilash26/zenline.nvim",
-    branch = "main",
-    config = function()
-          require("zenline").setup()
-    end
-  };
-```
 ## Lazy
 ```lua
   {
@@ -38,8 +29,16 @@ A simple statusline for neovim written in lua.
     }
   },
 ```
-
-#### Minimum Configuration
+## Pckr (Spiritual successor of packer)
+```lua
+  { "abhilash26/zenline.nvim",
+    branch = "main",
+    config = function()
+          require("zenline").setup()
+    end
+  };
+```
+## Minimum Configuration
 ```lua
 require("zenline").setup({
       sections = {
@@ -54,11 +53,11 @@ require("zenline").setup({
     }
 )
 ```
- #### Click to see default configuration
+ ## Click to see default configuration
  Default configuration is here [options](https://github.com/abhilash26/zenline.nvim/blob/main/lua/zenline/options.lua)
 
 
- #### Sections
+ ## Sections
 
  | section | use |
  |---------|-----|
