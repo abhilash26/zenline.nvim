@@ -1,15 +1,13 @@
 -- Default Options for Zenline
 return {
   sections = {
-    "mode",
-    "filepath",
-    "diagnostics",
-    "filetype",
-    "linecolumn"
+    left = { "mode" },
+    center = { "filepath" },
+    right = { "diagnostics", "filetype", "linecolumn" },
   },
   modes = {
-    ["n"] = { "ZenLineAccent", "NORMAL" },
-    ["no"] = { "ZenLineAccent", "NORMAL" },
+    ["n"] = { "ZenLineNormalAccent", "NORMAL" },
+    ["no"] = { "ZenLineNormalAccent", "NORMAL" },
     ["v"] = { "ZenLineVisualAccent", "VISUAL" },
     ["V"] = { "ZenLineVisualAccent", "VISUAL LINE" },
     ["^V"] = { "ZenLineVisualAccent", "VISUAL BLOCK" },
@@ -29,8 +27,6 @@ return {
     ["!"] = { "ZenLineAccent", "SHELL" },
     ["t"] = { "ZenLineTerminalAccent", "TERMINAL" },
   },
-  startblock = { "ZenLineAccent", "" },
-  endblock = { "ZenLineAccent", "" },
   filepath = {
     mod = { ":~:.:h", "%:t" },
     hl = "Normal"
@@ -42,14 +38,13 @@ return {
     }
   },
   linecolumn = {
-    text = " %P %l:%c",
-    hl = "Normal"
+    text = "%P %l:%c",
+    hl = "ZenLineNormalAccent"
   },
   diagnostics = {
     ["ERROR"] = { "DiagnosticError", " " },
     ["WARN"] = { "DiagnosticWarn", " " },
     ["INFO"] = { "DiagnosticInfo", " " },
     ["HINT"] = { "DiagnosticHint", " " },
-  },
-  global = true
+  }
 }

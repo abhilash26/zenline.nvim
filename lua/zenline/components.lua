@@ -1,15 +1,6 @@
 local opt = require("zenline.options")
-local components = {}
-local H = {}
-
--- Helper Functions
-
-
-H.get_hl = function(hl)
-  return string.format("%%#%s#", hl)
-end
-
-------------------------------------------------------------------------
+local utils = require("zenline.utils")
+local C = {}
 
 -- Cache
 
@@ -17,19 +8,25 @@ local api = vim.api
 local bo = vim.bo
 local diagnostic = vim.diagnostic
 local fn = vim.fn
-local get_hl = H.get_hl
+local get_hl = utils.get_hl
 
--- Components --
-components.startblock = function()
-  return string.format("%s%s", get_hl(opt.startblock[1]), opt.startblock[2])
+-- C --
+C.startblock = function()
+  local mode_hl = opt.modes[api.nvim_get_mode().mode] or opt.startblock[1]
+  return string.format("%s%s", get_hl(mode_hl), "")
 end
 
-components.endblock = function()
-  return string.format("%s%s", get_hl(opt.endblock[1]), opt.endblock[2])
+C.endblock = function()
+  local mode_hl = opt.modes[api.nvim_get_mode().mode] or opt.endblock[1]
+  return string.format("%s%s", get_hl(mode_hl), "")
+end
+
+C.section_separator = function()
+  return string.format("%s%s", get_hl("ZenLineAccent"), "%=")
 end
 
 -- Mode
-components.mode = function()
+C.mode = function()
   local current_mode = api.nvim_get_mode().mode
   local mode_info = opt.modes[current_mode]
   if not mode_info then
@@ -37,11 +34,11 @@ components.mode = function()
   end
   local mode_hl = mode_info[1]
   local mode_text = mode_info[2]
-  return string.format("%s %s ", get_hl(mode_hl), mode_text)
+  return string.format("%s %s", get_hl(mode_hl), mode_text)
 end
 
 -- File Path
-components.filepath = function()
+C.filepath = function()
   local filepath_mod = opt.filepath.mod
   local filepath_hl = get_hl(opt.filepath.hl)
   local fpath = fn.fnamemodify(fn.expand("%"), filepath_mod[1])
@@ -57,7 +54,7 @@ components.filepath = function()
 end
 
 -- File Type
-components.filetype = function()
+C.filetype = function()
   local filetype_hl = get_hl(opt.filetype.hl)
   local type = bo.filetype
   local extended_type = opt.filetype.extend[type]
@@ -70,12 +67,12 @@ components.filetype = function()
 end
 
 -- Line Column
-components.linecolumn = function()
+C.linecolumn = function()
   return string.format("%s %s", get_hl(opt.linecolumn.hl), opt.linecolumn.text)
 end
 
 -- Diagnostics
-components.diagnostics = function()
+C.diagnostics = function()
   local diag = {}
   local count = {}
   local severity = diagnostic.severity
@@ -91,4 +88,4 @@ components.diagnostics = function()
   return table.concat(diag, " ")
 end
 
-return components
+return C
