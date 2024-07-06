@@ -1,5 +1,9 @@
 -- Default Options for Zenline
 return {
+  inactive = {
+    text = "%F%=",
+    hl = "ZenLineInactive",
+  },
   sections = {
     left = { "mode" },
     center = { "filepath" },
@@ -26,25 +30,23 @@ return {
     ["r?"] = { "ZenLineAccent", "CONFIRM" },
     ["!"] = { "ZenLineAccent", "SHELL" },
     ["t"] = { "ZenLineTerminalAccent", "TERMINAL" },
+    default_mode = { "ZenLineAccent", "UNKNOWN" },
   },
   filepath = {
     mod = { ":~:.:h", "%:t" },
-    hl = "Normal"
+    hl = "Normal",
   },
   filetype = {
     hl = "Normal",
-    extend = {
-      ["alpha"] = "Alpha"
-    }
   },
   linecolumn = {
     text = "%P %l:%c",
-    hl = "ZenLineNormalAccent"
+    hl = "ZenLineNormalAccent",
   },
   diagnostics = {
     ["ERROR"] = { "DiagnosticError", " " },
     ["WARN"] = { "DiagnosticWarn", " " },
     ["INFO"] = { "DiagnosticInfo", " " },
     ["HINT"] = { "DiagnosticHint", " " },
-  }
+  },
 }
