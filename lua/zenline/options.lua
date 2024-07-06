@@ -30,7 +30,7 @@ return {
     ["r?"] = { "ZenLineAccent", "CONFIRM" },
     ["!"] = { "ZenLineAccent", "SHELL" },
     ["t"] = { "ZenLineTerminalAccent", "TERMINAL" },
-    default_mode = { "ZenLineAccent", "UNKNOWN" },
+    default_mode = { "ZenLineAccent", "UNKNOWN" }
   },
   filepath = {
     mod = { ":~:.:h", "%:t" },
