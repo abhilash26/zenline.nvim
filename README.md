@@ -30,18 +30,7 @@ A simple statusline for neovim written in lua.
 ```
 ## Minimum Configuration
 ```lua
-require("zenline").setup({
-      sections = {
-        "mode",
-        "%=",
-        "filepath",
-        "%=",
-        "diagnostics",
-        "filetype",
-        "linecolumn"
-      },
-    }
-)
+require("zenline").setup()
 ```
  ## Click to see default configuration
  Default configuration is here [options](https://github.com/abhilash26/zenline.nvim/blob/main/lua/zenline/options.lua)
