@@ -3,8 +3,8 @@ return {
   sections = {
     active = {
       left = { "mode" },
-      center = { "filepath" },
-      right = { "diagnostics", "filetype", "linecolumn" },
+      center = { "fileicon", "filepath" },
+      right = { "diagnostics", "fileicon", "filetype", "linecolumn" },
     },
     inactive = {
       text = "%F%=",
@@ -37,7 +37,7 @@ return {
   filepath = {
     mod = { ":~:.:h", "%:t" },
     hl = "Normal",
-    modified = "  ",
+    modified = " [+] ",
     readonly = "  ",
   },
   filetype = {

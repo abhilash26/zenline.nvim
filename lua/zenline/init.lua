@@ -82,6 +82,7 @@ M.cache_active = function()
       table.insert(active_sections, comp.section_separator())
     end
   end
+  P(active_sections)
 end
 
 -- Cache inactive status

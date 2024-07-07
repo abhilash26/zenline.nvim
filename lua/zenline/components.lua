@@ -15,12 +15,8 @@ local function get_mode_hl(mode, fallback)
   return opt.modes[mode] or fallback
 end
 
-local function get_icon()
-  local icon, _ = devicons.get_icon(fn.expand("%:t"), nil, { default = true })
-  return icon
-end
-
 -- Components
+
 C.section_separator = function()
   return string.format("%s%s", get_hl("ZenLineAccent"), "%=")
 end
@@ -31,24 +27,30 @@ C.mode = function()
 end
 
 C.filepath = function()
-  local fpath = fn.fnamemodify(fn.expand("%"), opt.filepath.mod[1])
-  local fname = fn.expand(opt.filepath.mod[2])
+  local fo = opt.filepath
+  local fpath = fn.fnamemodify(fn.expand("%"), fo.mod[1])
+  local fname = fn.expand(fo.mod[2])
 
   if fpath == "." or fpath == "" then
     fpath = " "
   else
-    fpath = string.format("%s %%<%s/", get_hl(opt.filepath.hl), fpath)
+    fpath = string.format("%s %%<%s/", get_hl(fo.hl), fpath)
   end
 
   local modified = bo.mod and opt.filepath.modified or ""
   local readonly = bo.readonly and opt.filepath.readonly or ""
 
-  return fname == "" and fpath or string.format("%s %s%s%s%s", get_icon(), fpath, fname, modified, readonly)
+  return fname == "" and fpath or string.format("%s%s%s%s", fpath, fname, modified, readonly)
 end
 
 C.filetype = function()
   local ft = bo.filetype
-  return string.format("%s %s %s", get_hl(opt.filetype.hl), get_icon(), ft)
+  return string.format("%s%s", get_hl(opt.filetype.hl), ft)
+end
+
+C.fileicon = function()
+  local icon, _ = devicons.get_icon(fn.expand("%:t"), nil, { default = true })
+  return icon
 end
 
 C.linecolumn = function()
