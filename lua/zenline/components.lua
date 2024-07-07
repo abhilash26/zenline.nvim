@@ -1,5 +1,6 @@
 local opt = require("zenline.options")
 local utils = require("zenline.utils")
+local devicons = require('nvim-web-devicons')
 local C = {}
 
 -- Cache
@@ -12,6 +13,11 @@ local get_hl = utils.get_hl
 -- Helper function to get mode highlight
 local function get_mode_hl(mode, fallback)
   return opt.modes[mode] or fallback
+end
+
+local function get_icon()
+  local icon, _ = devicons.get_icon(fn.expand("%:t"), nil, { default = true })
+  return icon
 end
 
 -- Components
@@ -37,11 +43,12 @@ C.filepath = function()
   local modified = bo.mod and opt.filepath.modified or ""
   local readonly = bo.readonly and opt.filepath.readonly or ""
 
-  return fname == "" and fpath or string.format("%s%s%s%s", fpath, fname, modified, readonly)
+  return fname == "" and fpath or string.format("%s %s%s%s%s", get_icon(), fpath, fname, modified, readonly)
 end
 
 C.filetype = function()
-  return string.format("%s %s", get_hl(opt.filetype.hl), bo.filetype)
+  local ft = bo.filetype
+  return string.format("%s %s %s", get_hl(opt.filetype.hl), get_icon(), ft)
 end
 
 C.linecolumn = function()

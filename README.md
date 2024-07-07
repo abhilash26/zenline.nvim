@@ -8,6 +8,7 @@ A simple statusline for neovim written in lua.
 * `vim.opt.laststatus=2` in your init.lua for statusline. (or `3` for global line)
 * `vim.opt.termguicolors = true` must be set.
 * Have a [nerd font installed](https://www.nerdfonts.com/font-downloads)
+* Devicons [web-devicons](https://github.com/nvim-tree/nvim-web-devicons)
 
 ### Installation
 
@@ -16,13 +17,14 @@ A simple statusline for neovim written in lua.
   {
     "abhilash26/zenline.nvim",
     event = { "BufReadPost", "BufNewFile" },
+    dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {}
   },
 ```
 ## Pckr (Spiritual successor of packer)
 ```lua
   { "abhilash26/zenline.nvim",
-    branch = "main",
+    requires ={ "nvim-tree/nvim-web-devicons" },
     config = function()
           require("zenline").setup()
     end
