@@ -1,13 +1,15 @@
 -- Default Options for Zenline
 return {
-  inactive = {
-    text = "%F%=",
-    hl = "ZenLineInactive",
-  },
   sections = {
-    left = { "mode" },
-    center = { "filepath" },
-    right = { "diagnostics", "filetype", "linecolumn" },
+    active = {
+      left = { "mode" },
+      center = { "filepath" },
+      right = { "diagnostics", "filetype", "linecolumn" },
+    },
+    inactive = {
+      text = "%F%=",
+      hl = "ZenLineInactive",
+    },
   },
   modes = {
     ["n"] = { "ZenLineNormalAccent", "NORMAL" },
@@ -35,6 +37,8 @@ return {
   filepath = {
     mod = { ":~:.:h", "%:t" },
     hl = "Normal",
+    modified = "  ",
+    readonly = "  ",
   },
   filetype = {
     hl = "Normal",

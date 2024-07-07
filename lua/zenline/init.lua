@@ -70,9 +70,7 @@ end
 
 -- Cache active sections
 M.cache_active = function()
-  local sections = cfg.sections
-
-  table.insert(active_sections, comp.startblock())
+  local sections = cfg.sections.active
 
   for _, pos in ipairs({ "left", "center", "right" }) do
     for _, section in ipairs(sections[pos]) do
@@ -84,8 +82,6 @@ M.cache_active = function()
       table.insert(active_sections, comp.section_separator())
     end
   end
-
-  table.insert(active_sections, comp.endblock())
 end
 
 -- Cache inactive status
@@ -149,7 +145,8 @@ end
 
 -- Inactive statusline function
 M.inactive = function()
-  return string.format("%s%s", utils.get_hl(cfg.inactive.hl), cfg.inactive.text)
+  local section = cfg.sections.inactive
+  return string.format("%s%s", utils.get_hl(section.hl), section.text)
 end
 
 return M

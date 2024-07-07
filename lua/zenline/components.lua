@@ -15,16 +15,6 @@ local function get_mode_hl(mode, fallback)
 end
 
 -- Components
-C.startblock = function()
-  local mode_hl = opt.modes[api.nvim_get_mode().mode] or opt.startblock[1]
-  return string.format("%s%s", get_hl(mode_hl), "")
-end
-
-C.endblock = function()
-  local mode_hl = opt.modes[api.nvim_get_mode().mode] or opt.endblock[1]
-  return string.format("%s%s", get_hl(mode_hl), "")
-end
-
 C.section_separator = function()
   return string.format("%s%s", get_hl("ZenLineAccent"), "%=")
 end
@@ -44,7 +34,10 @@ C.filepath = function()
     fpath = string.format("%s %%<%s/", get_hl(opt.filepath.hl), fpath)
   end
 
-  return fname == "" and fpath or string.format("%s%s ", fpath, fname)
+  local modified = bo.mod and opt.filepath.modified or ""
+  local readonly = bo.readonly and opt.filepath.readonly or ""
+
+  return fname == "" and fpath or string.format("%s%s%s%s", fpath, fname, modified, readonly)
 end
 
 C.filetype = function()

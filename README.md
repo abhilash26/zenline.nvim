@@ -16,17 +16,7 @@ A simple statusline for neovim written in lua.
   {
     "abhilash26/zenline.nvim",
     event = { "BufReadPost", "BufNewFile" },
-    opts = {
-      sections = {
-        "mode",
-        "%=",
-        "filepath",
-        "%=",
-        "diagnostics",
-        "filetype",
-        "linecolumn"
-      },
-    }
+    opts = {}
   },
 ```
 ## Pckr (Spiritual successor of packer)
