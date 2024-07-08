@@ -1,6 +1,9 @@
 # zenline.nvim
 A simple statusline for neovim written in lua.
 
+![image](https://github.com/abhilash26/zenline.nvim/assets/28080925/f698d710-17c2-494c-8a0a-d91e3fb41550)
+
+
 ### 🚧 WIP 🚧
 
 ## Requirements
