@@ -29,15 +29,15 @@ A simple statusline for neovim written in lua.
     end
   };
 ```
-#### Minimum Configuration
+### Minimum Configuration
 ```lua
 require("zenline").setup()
 ```
-#### Click to see default configuration
+### Click to see default configuration
  Default configuration is here [options](https://github.com/abhilash26/zenline.nvim/blob/main/lua/zenline/default_options.lua)
 
 
- #### Sections
+ ## Sections
 
  | section | use |
  |---------|-----|
