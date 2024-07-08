@@ -2,8 +2,8 @@
 return {
   sections = {
     active = {
-      left = { "mode" },
-      center = { "file_icon", "file_name" },
+      left = { "mode", "file_name" },
+      center = {},
       right = {
         "diagnostics",
         "file_icon",
@@ -32,7 +32,7 @@ return {
     file_type   = { hl = "ZenlineAccent", },
     file_name   = {
       hl = "ZenlineAccent",
-      mod = ":~:.:h",
+      mod = ":~:.",
       modified = " [+] ",
       readonly = "  ",
     },
