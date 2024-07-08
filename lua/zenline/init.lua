@@ -56,6 +56,28 @@ C.diagnostics = function()
   return table.concat(diag, " ")
 end
 
+C.git_branch = function()
+  local git_branch = vim.b.gitsigns_head
+  if not git_branch then
+    return ""
+  end
+  return string.format("%s%s%s", o.components.git_branch.icon, get_hl("ZenLineAccent"), git_branch)
+end
+
+C.git_diff = function()
+  local diff = vim.b.gitsigns_status_dict
+  if not diff then
+    return ""
+  end
+  local diff_text = {}
+  for key, value in pairs(o.components.git_diff) do
+    if diff[key] ~= 0 then
+      table.insert(diff_text, string.format("%s%s%s", get_hl(value[1]), value[2], diff[key]))
+    end
+  end
+  return table.concat(diff_text, " ")
+end
+
 C.line_column = function()
   return o.components.line_column.text
 end
@@ -123,6 +145,7 @@ M.cache_active_sections = function()
   local no_hl = {
     "mode",
     "diagnostics",
+    "git_diff",
   }
   for _, pos in ipairs({ "left", "center", "right" }) do
     for _, section in ipairs(o.sections.active[pos]) do

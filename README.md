@@ -1,16 +1,16 @@
 # zenline.nvim
 A simple statusline for neovim written in lua.
 
-## 🚧 WIP 🚧
+### 🚧 WIP 🚧
 
-### Requirements
+## Requirements
 * Requires neovim version >= 0.10
 * `vim.opt.laststatus=2` in your init.lua for statusline. (or `3` for global line)
 * Have a [nerd font installed](https://www.nerdfonts.com/font-downloads)
 
-### Installation
+## Installation
 
-#### Lazy
+### Lazy
 ```lua
   {
     "abhilash26/zenline.nvim",
@@ -18,7 +18,7 @@ A simple statusline for neovim written in lua.
     opts = {}
   },
 ```
-#### Pckr (Spiritual successor of packer)
+### Pckr (Spiritual successor of packer)
 ```lua
   { "abhilash26/zenline.nvim",
     config = function()
@@ -26,7 +26,7 @@ A simple statusline for neovim written in lua.
     end
   };
 ```
-### Minimum Configuration
+## Minimum Configuration
 ```lua
 require("zenline").setup()
 ```
@@ -34,7 +34,7 @@ require("zenline").setup()
  Default configuration is here [options](https://github.com/abhilash26/zenline.nvim/blob/main/lua/zenline/default_options.lua)
 
 
- ## Sections
+## Sections
 
  | section | use |
  |---------|-----|
@@ -43,3 +43,5 @@ require("zenline").setup()
  | file_type     | shows filetype |
  | diagnostics  | shows lsp diagnostics (number of errors, warnings, etc) |
  | line_column   | shows line, column, percentage, etc |
+ | git_branch   | shows current branch name (uses [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) ) |
+ | git_diff   | shows diff (added, changed and deleted) icons with count (uses [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) ) |
