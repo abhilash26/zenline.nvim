@@ -5,7 +5,6 @@ local plugin_loaded = false
 local active_sections = {}
 local compute_indicies = {}
 local default_options = require("zenline.default_options")
-local devicons = require('nvim-web-devicons')
 local o = {}
 local status_active = "%{%v:lua.Zenline.active()%}"
 local status_inactive = "%{%v:lua.Zenline.inactive()%}"
@@ -43,11 +42,6 @@ end
 
 C.file_type = function()
   return vim.bo.filetype
-end
-
-C.file_icon = function()
-  local icon, _ = devicons.get_icon(vim.fn.expand("%:t"), nil, { default = true })
-  return icon
 end
 
 C.diagnostics = function()

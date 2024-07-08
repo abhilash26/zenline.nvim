@@ -2,11 +2,10 @@
 return {
   sections = {
     active = {
-      left = { "mode", "file_name" },
+      left = { "mode", "file_icon", "file_name" },
       center = {},
       right = {
         "diagnostics",
-        "file_icon",
         "file_type",
         "line_column"
       },

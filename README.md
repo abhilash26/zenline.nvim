@@ -7,7 +7,6 @@ A simple statusline for neovim written in lua.
 * Requires neovim version >= 0.10
 * `vim.opt.laststatus=2` in your init.lua for statusline. (or `3` for global line)
 * Have a [nerd font installed](https://www.nerdfonts.com/font-downloads)
-* Devicons [web-devicons](https://github.com/nvim-tree/nvim-web-devicons)
 
 ### Installation
 
@@ -16,14 +15,12 @@ A simple statusline for neovim written in lua.
   {
     "abhilash26/zenline.nvim",
     event = { "BufReadPost", "BufNewFile" },
-    dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {}
   },
 ```
 #### Pckr (Spiritual successor of packer)
 ```lua
   { "abhilash26/zenline.nvim",
-    requires ={ "nvim-tree/nvim-web-devicons" },
     config = function()
           require("zenline").setup()
     end
@@ -44,6 +41,5 @@ require("zenline").setup()
  | mode         | shows the mode |
  | file_name     | shows filename with path to cwd |
  | file_type     | shows filetype |
- | file_icon     | shows fileicon using devicons |
  | diagnostics  | shows lsp diagnostics (number of errors, warnings, etc) |
  | line_column   | shows line, column, percentage, etc |
