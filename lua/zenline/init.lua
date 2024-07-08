@@ -129,7 +129,6 @@ M.cache_active_sections = function()
   local no_hl = {
     "mode",
     "diagnostics",
-    "file_icon"
   }
   for _, pos in ipairs({ "left", "center", "right" }) do
     for _, section in ipairs(o.sections.active[pos]) do
