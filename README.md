@@ -10,6 +10,7 @@ A simple statusline for neovim written in lua.
 * Requires neovim version >= 0.10
 * `vim.opt.laststatus=2` in your init.lua for statusline. (or `3` for global line)
 * Have a [nerd font installed](https://www.nerdfonts.com/font-downloads)
+* Have [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) installed (requirement for git branch and git_diff components)
 
 ## Installation
 
