@@ -11,12 +11,15 @@ local status_inactive = "%{%v:lua.Zenline.inactive()%}"
 local diagnostic_cache = {}
 local git_diff_cache = {}
 
+-- Cache vim.api global
+local api = vim.api
+
 local get_hl = function(hl)
   return string.format("%%#%s#", hl)
 end
 
 local flip_hl = function(hl)
-  local hl_data = vim.api.nvim_get_hl(0, { name = hl })
+  local hl_data = api.nvim_get_hl(0, { name = hl })
   return {
     fg = hl_data.bg,
     bg = hl_data.fg,
@@ -28,7 +31,7 @@ C = {}
 
 -- mode component
 C.mode = function()
-  local m = vim.api.nvim_get_mode().mode
+  local m = api.nvim_get_mode().mode
   local mode_info = o.components.mode[m] or o.components.mode.default
   return string.format("%%#%s# %s", mode_info[1], mode_info[2])
 end
@@ -92,7 +95,7 @@ M.merge_config = function(opts)
 end
 
 M.define_highlights = function()
-  local status = vim.api.nvim_get_hl(0, { name = "StatusLine" })
+  local status = api.nvim_get_hl(0, { name = "StatusLine" })
 
   local hls = {
     ["ZenlineError"] = "DiagnosticError",
@@ -114,16 +117,16 @@ M.define_highlights = function()
   }
 
   for hl, link in pairs(hls) do
-    local hl_data = vim.api.nvim_get_hl(0, { name = link })
-    vim.api.nvim_set_hl(0, hl, { fg = hl_data.fg, bg = status.bg })
+    local hl_data = api.nvim_get_hl(0, { name = link })
+    api.nvim_set_hl(0, hl, { fg = hl_data.fg, bg = status.bg })
   end
 
   for hl, link in pairs(flip_hls) do
     local hl_data = flip_hl(link)
-    vim.api.nvim_set_hl(0, hl, { fg = status.bg, bg = hl_data.bg })
+    api.nvim_set_hl(0, hl, { fg = status.bg, bg = hl_data.bg })
   end
 
-  vim.api.nvim_set_hl(0, "ZenLineAccent", { link = "StatusLine" })
+  api.nvim_set_hl(0, "ZenLineAccent", { link = "StatusLine" })
 end
 
 M.active = function()
@@ -140,16 +143,16 @@ M.inactive = function()
 end
 
 M.set_global_statusline = vim.schedule_wrap(function()
-  local cur_win = vim.api.nvim_get_current_win()
+  local cur_win = api.nvim_get_current_win()
   vim.wo[cur_win].statusline = status_active
 end)
 
 M.set_statusline = vim.schedule_wrap(function()
-  local cur_win = vim.api.nvim_get_current_win()
-  for _, w in ipairs(vim.api.nvim_list_wins()) do
+  local cur_win = api.nvim_get_current_win()
+  for _, w in ipairs(api.nvim_list_wins()) do
     if cur_win == w then
       vim.wo[w].statusline = status_active
-    elseif vim.api.nvim_buf_get_name(0) ~= "" then
+    elseif api.nvim_buf_get_name(0) ~= "" then
       vim.wo[w].statusline = status_inactive
     end
   end
@@ -198,18 +201,18 @@ M.cache_active_sections = function()
 end
 
 M.create_autocommands = function()
-  local augroup = vim.api.nvim_create_augroup("Zenline", { clear = true })
+  local augroup = api.nvim_create_augroup("Zenline", { clear = true })
   local is_global = (vim.o.laststatus == 3)
 
   -- create statusline
-  vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
+  api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
     group = augroup,
     callback = is_global and M.set_global_statusline or M.set_statusline,
     desc = "set statusline"
   })
 
   -- redefine highlights on colorscheme change
-  vim.api.nvim_create_autocmd({ "ColorScheme" }, {
+  api.nvim_create_autocmd({ "ColorScheme" }, {
     group = augroup,
     callback = vim.schedule_wrap(function()
       M.define_highlights()
