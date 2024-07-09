@@ -9,6 +9,7 @@ local o = {}
 local status_active = "%{%v:lua.Zenline.active()%}"
 local status_inactive = "%{%v:lua.Zenline.inactive()%}"
 local diagnostic_cache = {}
+local git_diff_cache = {}
 
 local get_hl = function(hl)
   return string.format("%%#%s#", hl)
@@ -70,9 +71,10 @@ C.git_diff = function()
     return ""
   end
   local diff_text = {}
-  for key, value in pairs(o.components.git_diff) do
-    if diff[key] ~= 0 then
-      table.insert(diff_text, string.format("%s%s%s", get_hl(value[1]), value[2], diff[key]))
+  for key, _ in pairs(o.components.git_diff) do
+    local count = diff[key]
+    if count and count > 0 then
+      table.insert(diff_text, string.format("%s%s", git_diff_cache[key], count))
     end
   end
   return table.concat(diff_text, " ")
@@ -141,6 +143,12 @@ M.cache_diagnostics = function()
   end
 end
 
+M.cache_git_diff = function()
+  for key, value in pairs(o.components.git_diff) do
+    git_diff_cache[key] = string.format("%s%s", get_hl(value[1]), value[2])
+  end
+end
+
 M.cache_active_sections = function()
   local no_hl = {
     "mode",
@@ -202,6 +210,7 @@ M.setup = function(opts)
   M.merge_config(opts)
   M.define_highlights()
   M.cache_diagnostics()
+  M.cache_git_diff()
   M.cache_active_sections()
   M.create_autocommands()
 end
