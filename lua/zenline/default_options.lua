@@ -55,5 +55,18 @@ return {
       ["changed"] = { "ZenlineChange", " " },
       ["removed"] = { "ZenlineDelete", " " },
     },
+  },
+  special_fts = {
+    ["alpha"] = { "Alpha", "󰀫 " },
+    ["lazy"] = { "Lazy", "󰏔 " },
+    ["mason"] = { "Mason", "" },
+    ["NvimTree"] = { "NvimTree", " " },
+    ["neo-tree"] = { "Neotree", " " },
+    ["oil"] = { "Oil", "󰖌 " },
+    ["help"] = { "Help", "󰋗 " },
+    ["lspinfo"] = { "LspInfo", " " },
+    ["checkhealth"] = { "Checkhealth", "󰗶 " },
+    ["spectre_panel"] = { "Spectre", "" },
+    ["man"] = { "Man", " " },
   }
 }

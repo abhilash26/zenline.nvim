@@ -150,10 +150,15 @@ end)
 M.set_statusline = vim.schedule_wrap(function()
   local cur_win = api.nvim_get_current_win()
   for _, w in ipairs(api.nvim_list_wins()) do
-    if cur_win == w then
-      vim.wo[w].statusline = status_active
-    elseif api.nvim_buf_get_name(0) ~= "" then
-      vim.wo[w].statusline = status_inactive
+    local ft = o.special_fts[vim.bo.ft]
+    if ft then
+      vim.wo[w].statusline = string.format("%%=%s%s %s%%=", get_hl("ZenLineAccent"), ft[1], ft[2])
+    else
+      if cur_win == w then
+        vim.wo[w].statusline = status_active
+      elseif api.nvim_buf_get_name(0) ~= "" then
+        vim.wo[w].statusline = status_inactive
+      end
     end
   end
 end)
