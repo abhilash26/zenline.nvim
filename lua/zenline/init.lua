@@ -92,7 +92,19 @@ M.merge_config = function(opts)
 end
 
 M.define_highlights = function()
+  local status = vim.api.nvim_get_hl(0, { name = "StatusLine" })
+
   local hls = {
+    ["ZenlineError"] = "DiagnosticError",
+    ["ZenlineWarn"] = "DiagnosticWarn",
+    ["ZenlineInfo"] = "DiagnosticInfo",
+    ["ZenlineHint"] = "DiagnosticHint",
+    ["ZenlineAdd"] = "SignAdd",
+    ["ZenlineChange"] = "SignChange",
+    ["ZenlineDelete"] = "SignDelete",
+  }
+
+  local flip_hls = {
     ["ZenLineNormal"] = "Function",
     ["ZenLineInsert"] = "String",
     ["ZenLineVisual"] = "Special",
@@ -100,11 +112,17 @@ M.define_highlights = function()
     ["ZenLineReplace"] = "Identifier",
     ["ZenLineTerminal"] = "Comment",
   }
-  local status = vim.api.nvim_get_hl(0, { name = "StatusLine" })
+
   for hl, link in pairs(hls) do
+    local hl_data = vim.api.nvim_get_hl(0, { name = link })
+    vim.api.nvim_set_hl(0, hl, { fg = hl_data.fg, bg = status.bg })
+  end
+
+  for hl, link in pairs(flip_hls) do
     local hl_data = flip_hl(link)
     vim.api.nvim_set_hl(0, hl, { fg = status.bg, bg = hl_data.bg })
   end
+
   vim.api.nvim_set_hl(0, "ZenLineAccent", { link = "StatusLine" })
 end
 
@@ -203,7 +221,7 @@ end
 -- setup function
 M.setup = function(opts)
   -- return if setup has already taken place
-  if plugin_loaded then return end
+  if plugin_loaded then return else plugin_loaded = true end
   table.insert(active_sections, get_hl("ZenLineAccent"))
   -- exporting the module
   _G.Zenline = M

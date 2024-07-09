@@ -37,10 +37,10 @@ return {
     },
     file_icon   = { hl = "Normal" },
     diagnostics = {
-      ["ERROR"] = { "DiagnosticError", " " },
-      ["WARN"] = { "DiagnosticWarn", " " },
-      ["INFO"] = { "DiagnosticInfo", " " },
-      ["HINT"] = { "DiagnosticHint", " " },
+      ["ERROR"] = { "ZenlineError", " " },
+      ["WARN"] = { "ZenlineWarn", " " },
+      ["INFO"] = { "ZenlineInfo", " " },
+      ["HINT"] = { "ZenlineHint", " " },
     },
     line_column = {
       hl = "ZenlineAccent",
@@ -51,9 +51,9 @@ return {
       icon = " "
     },
     git_diff    = {
-      ["added"] = { "GitSignsAdd", " " },
-      ["changed"] = { "GitSignsChange", " " },
-      ["removed"] = { "GitSignsDelete", " " },
+      ["added"] = { "ZenlineAdd", " " },
+      ["changed"] = { "ZenlineChange", " " },
+      ["removed"] = { "ZenlineDelete", " " },
     },
   }
 }
