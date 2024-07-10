@@ -2,14 +2,14 @@
 
 -- default options
 local plugin_loaded = false
-local active_sections = {}
-local compute_indicies = {}
+local active_sects = {}
+local compute_idx = {}
 local default_options = require("zenline.default_options")
 local o = {}
 local status_active = "%{%v:lua.Zenline.active()%}"
 local status_inactive = "%{%v:lua.Zenline.inactive()%}"
-local diagnostic_cache = {}
-local git_diff_cache = {}
+local diag_cache = {}
+local diff_cache = {}
 
 -- Cache vim.api global
 local api = vim.api
@@ -51,7 +51,7 @@ end
 C.diagnostics = function()
   local diag = {}
 
-  for level, k in pairs(diagnostic_cache) do
+  for level, k in pairs(diag_cache) do
     local count = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity[level] })
     if count > 0 then
       diag[#diag + 1] = string.format("%s%d", k, count)
@@ -77,7 +77,7 @@ C.git_diff = function()
   for key, _ in pairs(o.components.git_diff) do
     local count = diff[key]
     if count and count > 0 then
-      table.insert(diff_text, string.format("%s%s", git_diff_cache[key], count))
+      table.insert(diff_text, string.format("%s%s", diff_cache[key], count))
     end
   end
   return table.concat(diff_text, " ")
@@ -130,12 +130,12 @@ M.define_highlights = function()
 end
 
 M.active = function()
-  for i = 1, #compute_indicies, 2 do
-    local idx = compute_indicies[i]
-    local component = compute_indicies[i + 1]
-    active_sections[idx] = C[component]()
+  for i = 1, #compute_idx, 2 do
+    local idx = compute_idx[i]
+    local component = compute_idx[i + 1]
+    active_sects[idx] = C[component]()
   end
-  return table.concat(active_sections, " ")
+  return table.concat(active_sects, " ")
 end
 
 M.inactive = function()
@@ -165,13 +165,13 @@ end)
 
 M.cache_diagnostics = function()
   for severity, t in pairs(o.components.diagnostics) do
-    diagnostic_cache[severity] = string.format("%s%s", get_hl(t[1]), t[2])
+    diag_cache[severity] = string.format("%s%s", get_hl(t[1]), t[2])
   end
 end
 
 M.cache_git_diff = function()
   for key, value in pairs(o.components.git_diff) do
-    git_diff_cache[key] = string.format("%s%s", get_hl(value[1]), value[2])
+    diff_cache[key] = string.format("%s%s", get_hl(value[1]), value[2])
   end
 end
 
@@ -191,16 +191,16 @@ M.cache_active_sections = function()
         end
 
         if not no_hl_lookup[section] then
-          table.insert(active_sections, get_hl(component.hl))
+          table.insert(active_sects, get_hl(component.hl))
         end
-        table.insert(compute_indicies, #active_sections + 1)
-        table.insert(compute_indicies, section)
-        table.insert(active_sections, "")
+        table.insert(compute_idx, #active_sects + 1)
+        table.insert(compute_idx, section)
+        table.insert(active_sects, "")
       end
     end
     if pos ~= "right" then
-      table.insert(active_sections, get_hl("ZenLineAccent"))
-      table.insert(active_sections, "%=")
+      table.insert(active_sects, get_hl("ZenLineAccent"))
+      table.insert(active_sects, "%=")
     end
   end
 end
@@ -230,7 +230,7 @@ end
 M.setup = function(opts)
   -- return if setup has already taken place
   if plugin_loaded then return else plugin_loaded = true end
-  table.insert(active_sections, get_hl("ZenLineAccent"))
+  table.insert(active_sects, get_hl("ZenLineAccent"))
   -- exporting the module
   _G.Zenline = M
   M.merge_config(opts)
