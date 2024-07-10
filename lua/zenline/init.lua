@@ -129,24 +129,18 @@ end
 
 M.set_global_statusline = function()
   local cur_win = api.nvim_get_current_win()
-  local ft = o.special_fts[vim.bo.ft]
-  if ft then
-    vim.wo[cur_win].statusline = special_cache[vim.bo.ft]
-  else
-    vim.wo[cur_win].statusline = status_active
-  end
+  local ft = vim.bo.ft
+  local ft_opts = o.special_fts[ft]
+  vim.wo[cur_win].statusline = ft_opts and special_cache[ft] or status_active
 end
 
 M.set_statusline = function()
   local cur_win = api.nvim_get_current_win()
   for _, w in ipairs(api.nvim_list_wins()) do
     if cur_win == w then
-      local ft = o.special_fts[vim.bo.ft]
-      if ft then
-        vim.wo[w].statusline = special_cache[vim.bo.ft]
-      else
-        vim.wo[w].statusline = status_active
-      end
+      local ft = vim.bo.ft
+      local ft_opts = o.special_fts[ft]
+      vim.wo[cur_win].statusline = ft_opts and special_cache[ft] or status_active
     else
       vim.wo[w].statusline = status_inactive
     end
