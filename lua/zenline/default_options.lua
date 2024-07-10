@@ -28,22 +28,21 @@ return {
       ["t"] = { "ZenLineTerminal", "TERMINAL" },
       default = { "Normal", "UNKNOWN" }
     },
-    file_type   = { hl = "ZenlineAccent", },
+    file_type   = { hl = "ZenLineAccent", },
     file_name   = {
-      hl = "ZenlineAccent",
+      hl = "ZenLineAccent",
       mod = ":~:.",
       modified = " [+] ",
       readonly = "  ",
     },
-    file_icon   = { hl = "Normal" },
     diagnostics = {
-      ["ERROR"] = { "ZenlineError", " " },
-      ["WARN"] = { "ZenlineWarn", " " },
-      ["INFO"] = { "ZenlineInfo", " " },
-      ["HINT"] = { "ZenlineHint", " " },
+      ["ERROR"] = { "ZenLineError", " " },
+      ["WARN"] = { "ZenLineWarn", " " },
+      ["INFO"] = { "ZenLineInfo", " " },
+      ["HINT"] = { "ZenLineHint", " " },
     },
     line_column = {
-      hl = "ZenlineAccent",
+      hl = "ZenLineAccent",
       text = "%P %l:%c ",
     },
     git_branch  = {
@@ -51,9 +50,9 @@ return {
       icon = " "
     },
     git_diff    = {
-      ["added"] = { "ZenlineAdd", " " },
-      ["changed"] = { "ZenlineChange", " " },
-      ["removed"] = { "ZenlineDelete", " " },
+      ["added"] = { "ZenLineAdd", " " },
+      ["changed"] = { "ZenLineChange", " " },
+      ["removed"] = { "ZenLineDelete", " " },
     },
   },
   special_fts = {
