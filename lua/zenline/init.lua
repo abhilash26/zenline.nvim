@@ -177,20 +177,15 @@ end
 
 M.cache_active_sections = function()
   local no_hl = {
-    "mode",
-    "diagnostics",
-    "git_diff",
+    mode = true,
+    diagnostics = true,
+    git_diff = true,
   }
   for _, pos in ipairs({ "left", "center", "right" }) do
     for _, section in ipairs(o.sections.active[pos]) do
       local component = o.components[section]
       if component then
-        local no_hl_lookup = {}
-        for _, v in ipairs(no_hl) do
-          no_hl_lookup[v] = true
-        end
-
-        if not no_hl_lookup[section] then
+        if not no_hl[section] then
           active_sects[#active_sects + 1] = get_hl(component.hl)
         end
         compute_idx[#compute_idx + 1] = #active_sects + 1
