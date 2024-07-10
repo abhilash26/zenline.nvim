@@ -10,6 +10,7 @@ local status_active = "%{%v:lua.Zenline.active()%}"
 local status_inactive = "%{%v:lua.Zenline.inactive()%}"
 local diag_cache = {}
 local diff_cache = {}
+local special_cache = {}
 
 -- Cache vim.api global
 local api = vim.api
@@ -150,15 +151,15 @@ end)
 M.set_statusline = vim.schedule_wrap(function()
   local cur_win = api.nvim_get_current_win()
   for _, w in ipairs(api.nvim_list_wins()) do
-    local ft = o.special_fts[vim.bo.ft]
-    if ft then
-      vim.wo[w].statusline = string.format("%%=%s%s %s%%=", get_hl("ZenLineAccent"), ft[1], ft[2])
-    else
-      if cur_win == w then
+    if cur_win == w then
+      local ft = o.special_fts[vim.bo.ft]
+      if ft then
+        vim.wo[w].statusline = special_cache[vim.bo.ft]
+      else
         vim.wo[w].statusline = status_active
-      elseif api.nvim_buf_get_name(0) ~= "" then
-        vim.wo[w].statusline = status_inactive
       end
+    elseif api.nvim_buf_get_name(0) ~= "" then
+      vim.wo[w].statusline = status_inactive
     end
   end
 end)
@@ -172,6 +173,13 @@ end
 M.cache_git_diff = function()
   for key, value in pairs(o.components.git_diff) do
     diff_cache[key] = string.format("%s%s", get_hl(value[1]), value[2])
+  end
+end
+
+M.cache_special = function()
+  local hl = get_hl("ZenLineAccent")
+  for ft, data in pairs(o.special_fts) do
+    special_cache[ft] = table.concat({ hl, "%=", data[2], data[1], "%=" }, "")
   end
 end
 
@@ -230,10 +238,14 @@ M.setup = function(opts)
   _G.Zenline = M
   M.merge_config(opts)
   M.define_highlights()
+  -- perf: set cache to improve performance
   M.cache_diagnostics()
   M.cache_git_diff()
   M.cache_active_sections()
+  M.cache_special()
   M.create_autocommands()
+  -- set statusline
+  vim.g.statusline = status_active
 end
 
 return M

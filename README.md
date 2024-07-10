@@ -18,7 +18,6 @@ A simple statusline for neovim written in lua.
 ```lua
   {
     "abhilash26/zenline.nvim",
-    event = { "BufReadPost", "BufNewFile" },
     opts = {}
   },
 ```
