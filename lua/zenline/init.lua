@@ -77,7 +77,7 @@ C.git_diff = function()
   for key, _ in pairs(o.components.git_diff) do
     local count = diff[key]
     if count and count > 0 then
-      table.insert(diff_text, string.format("%s%s", diff_cache[key], count))
+      diff_text[#diff_text + 1] = string.format("%s%s", diff_cache[key], count)
     end
   end
   return table.concat(diff_text, " ")
@@ -191,16 +191,16 @@ M.cache_active_sections = function()
         end
 
         if not no_hl_lookup[section] then
-          table.insert(active_sects, get_hl(component.hl))
+          active_sects[#active_sects + 1] = get_hl(component.hl)
         end
-        table.insert(compute_idx, #active_sects + 1)
-        table.insert(compute_idx, section)
-        table.insert(active_sects, "")
+        compute_idx[#compute_idx + 1] = #active_sects + 1
+        compute_idx[#compute_idx + 1] = section
+        active_sects[#active_sects + 1] = ""
       end
     end
     if pos ~= "right" then
-      table.insert(active_sects, get_hl("ZenLineAccent"))
-      table.insert(active_sects, "%=")
+      active_sects[#active_sects + 1] = get_hl("ZenLineAccent")
+      active_sects[#active_sects + 1] = "%="
     end
   end
 end
@@ -230,7 +230,7 @@ end
 M.setup = function(opts)
   -- return if setup has already taken place
   if plugin_loaded then return else plugin_loaded = true end
-  table.insert(active_sects, get_hl("ZenLineAccent"))
+  active_sects[#active_sects + 1] = get_hl("ZenLineAccent")
   -- exporting the module
   _G.Zenline = M
   M.merge_config(opts)
