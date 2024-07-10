@@ -127,12 +127,17 @@ M.inactive = function()
   status_inactive = o.sections.inactive.text
 end
 
-M.set_global_statusline = vim.schedule_wrap(function()
+M.set_global_statusline = function()
   local cur_win = api.nvim_get_current_win()
-  vim.wo[cur_win].statusline = status_active
-end)
+  local ft = o.special_fts[vim.bo.ft]
+  if ft then
+    vim.wo[cur_win].statusline = special_cache[vim.bo.ft]
+  else
+    vim.wo[cur_win].statusline = status_active
+  end
+end
 
-M.set_statusline = vim.schedule_wrap(function()
+M.set_statusline = function()
   local cur_win = api.nvim_get_current_win()
   for _, w in ipairs(api.nvim_list_wins()) do
     if cur_win == w then
@@ -142,11 +147,11 @@ M.set_statusline = vim.schedule_wrap(function()
       else
         vim.wo[w].statusline = status_active
       end
-    elseif api.nvim_buf_get_name(0) ~= "" then
+    else
       vim.wo[w].statusline = status_inactive
     end
   end
-end)
+end
 
 M.cache_mode = function()
   for key, value in pairs(o.components.mode) do
@@ -201,21 +206,19 @@ end
 
 M.create_autocommands = function()
   local augroup = api.nvim_create_augroup("Zenline", { clear = true })
-  local is_global = (vim.o.laststatus == 3)
+  local isglobal = vim.o.laststatus == 3
 
   -- create statusline
   api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
     group = augroup,
-    callback = is_global and M.set_global_statusline or M.set_statusline,
+    callback = isglobal and M.set_global_statusline or M.set_statusline,
     desc = "set statusline"
   })
 
   -- redefine highlights on colorscheme change
   api.nvim_create_autocmd({ "ColorScheme" }, {
     group = augroup,
-    callback = vim.schedule_wrap(function()
-      M.define_highlights()
-    end),
+    callback = M.define_highlights,
     desc = "define highlights"
   })
 end
