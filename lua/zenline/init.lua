@@ -71,22 +71,18 @@ end
 
 C.git_branch = function()
   local git_branch = vim.b.gitsigns_head
-  if not git_branch then
-    return ""
-  end
+  if not git_branch then return "" end
   return string.format("%s%s%s", o.components.git_branch.icon, hls["ZenLineAccent"].txt, git_branch)
 end
 
 C.git_diff = function()
   local diff = vim.b.gitsigns_status_dict
-  if not diff then
-    return ""
-  end
+  if not diff then return "" end
   local diff_text = {}
-  for key, _ in pairs(o.components.git_diff) do
-    local count = diff[key]
+  for type, k in pairs(diff_cache) do
+    local count = diff[type]
     if count and count > 0 then
-      diff_text[#diff_text + 1] = string.format("%s%s", diff_cache[key], count)
+      diff_text[#diff_text + 1] = string.format("%s%s", k, count)
     end
   end
   return table.concat(diff_text, " ")
@@ -239,7 +235,6 @@ M.setup = function(opts)
   M.cache_active_sections()
   M.cache_special()
   M.create_autocommands()
-  active_sects[#active_sects + 1] = hls["ZenLineAccent"].txt
   -- set statusline
   vim.g.statusline = status_active
 end
