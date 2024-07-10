@@ -67,5 +67,7 @@ return {
     ["checkhealth"] = { "Checkhealth", "󰗶 " },
     ["spectre_panel"] = { "Spectre", "" },
     ["man"] = { "Man", " " },
+    ["qt"] = { "Quickfix", " " },
+    ["toggleterm"] = { "ToggleTerm", " " },
   }
 }
