@@ -13,20 +13,20 @@ local diag_cache = {}
 local diff_cache = {}
 local special_cache = {}
 local hls = {
-  ["ZenLineError"] = { link = "DiagnosticError", flip = false, txt = "%#ZenLineError#" },
-  ["ZenLineWarn"] = { link = "DiagnosticWarn", flip = false, txt = "%#ZenLineWarn#" },
-  ["ZenLineInfo"] = { link = "DiagnosticInfo", flip = false, txt = "%#ZenLineInfo#" },
-  ["ZenLineHint"] = { link = "DiagnosticHint", flip = false, txt = "%#ZenLineHint#" },
-  ["ZenLineAdd"] = { link = "SignAdd", flip = false, txt = "%#ZenLineAdd#" },
-  ["ZenLineChange"] = { link = "SignChange", flip = false, txt = "%#ZenLineChange#" },
-  ["ZenLineDelete"] = { link = "SignDelete", flip = false, txt = "%#ZenLineDelete#" },
-  ["ZenLineNormal"] = { link = "Function", flip = true, txt = "%#ZenLineNormal#" },
-  ["ZenLineInsert"] = { link = "String", flip = true, txt = "%#ZenLineInsert#" },
-  ["ZenLineVisual"] = { link = "Special", flip = true, txt = "%#ZenLineVisual#" },
-  ["ZenLineCmdLine"] = { link = "Constant", flip = true, txt = "%#ZenLineCmdLine#" },
-  ["ZenLineReplace"] = { link = "Identifier", flip = true, txt = "%#ZenLineReplace#" },
-  ["ZenLineTerminal"] = { link = "Comment", flip = true, txt = "%#ZenLineTerminal#" },
-  ["ZenLineAccent"] = { link = "StatusLine", flip = false, txt = "%#ZenLineAccent#" },
+  ["ZenlineError"] = { link = "DiagnosticError", flip = false, txt = "%#ZenlineError#" },
+  ["ZenlineWarn"] = { link = "DiagnosticWarn", flip = false, txt = "%#ZenlineWarn#" },
+  ["ZenlineInfo"] = { link = "DiagnosticInfo", flip = false, txt = "%#ZenlineInfo#" },
+  ["ZenlineHint"] = { link = "DiagnosticHint", flip = false, txt = "%#ZenlineHint#" },
+  ["ZenlineAdd"] = { link = "SignAdd", flip = false, txt = "%#ZenlineAdd#" },
+  ["ZenlineChange"] = { link = "SignChange", flip = false, txt = "%#ZenlineChange#" },
+  ["ZenlineDelete"] = { link = "SignDelete", flip = false, txt = "%#ZenlineDelete#" },
+  ["ZenlineNormal"] = { link = "Function", flip = true, txt = "%#ZenlineNormal#" },
+  ["ZenlineInsert"] = { link = "String", flip = true, txt = "%#ZenlineInsert#" },
+  ["ZenlineVisual"] = { link = "Special", flip = true, txt = "%#ZenlineVisual#" },
+  ["ZenlineCmdLine"] = { link = "Constant", flip = true, txt = "%#ZenlineCmdLine#" },
+  ["ZenlineReplace"] = { link = "Identifier", flip = true, txt = "%#ZenlineReplace#" },
+  ["ZenlineTerminal"] = { link = "Comment", flip = true, txt = "%#ZenlineTerminal#" },
+  ["ZenlineAccent"] = { link = "StatusLine", flip = false, txt = "%#ZenlineAccent#" },
 }
 
 -- Cache vim.api global
@@ -72,7 +72,7 @@ end
 C.git_branch = function()
   local git_branch = vim.b.gitsigns_head
   if not git_branch then return "" end
-  return string.format("%s%s%s", o.components.git_branch.icon, hls["ZenLineAccent"].txt, git_branch)
+  return string.format("%s%s%s", o.components.git_branch.icon, hls["ZenlineAccent"].txt, git_branch)
 end
 
 C.git_diff = function()
@@ -167,7 +167,7 @@ M.cache_git_diff = function()
 end
 
 M.cache_special = function()
-  local hl = hls["ZenLineAccent"].txt
+  local hl = hls["ZenlineAccent"].txt
   for ft, data in pairs(o.special_fts) do
     special_cache[ft] = table.concat({ hl, "%=", data[2], data[1], "%=" }, "")
   end
@@ -179,7 +179,7 @@ M.cache_active_sections = function()
     diagnostics = true,
     git_diff = true,
   }
-  active_sects[#active_sects + 1] = hls["ZenLineAccent"].txt
+  active_sects[#active_sects + 1] = hls["ZenlineAccent"].txt
   for _, pos in ipairs({ "left", "center", "right" }) do
     for _, section in ipairs(o.sections.active[pos]) do
       local component = o.components[section]
@@ -193,7 +193,7 @@ M.cache_active_sections = function()
       end
     end
     if pos ~= "right" then
-      active_sects[#active_sects + 1] = hls["ZenLineAccent"].txt
+      active_sects[#active_sects + 1] = hls["ZenlineAccent"].txt
       active_sects[#active_sects + 1] = "%="
     end
   end
