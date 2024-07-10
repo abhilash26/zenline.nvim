@@ -42,7 +42,7 @@ return {
       ["HINT"] = { "ZenlineHint", " " },
     },
     line_column = {
-      hl = "ZenlineAccent",
+      hl = "ZenlineNormal",
       text = "%P %l:%c ",
     },
     git_branch  = {
