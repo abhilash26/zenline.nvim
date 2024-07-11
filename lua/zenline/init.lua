@@ -4,7 +4,7 @@
 local plugin_loaded = false
 local active_sects = {}
 local compute_idx = {}
-local default_options = require("zenline.default_options")
+local default_options = require("zenline.config")
 local o = {}
 local status_active = "%{%v:lua.Zenline.active()%}"
 local status_inactive = "%{%v:lua.Zenline.inactive()%}"
@@ -59,10 +59,11 @@ end
 
 C.diagnostics = function()
   local diag = {}
+  local diag_count = vim.diagnostic.count(0)
 
   for level, k in pairs(diag_cache) do
-    local count = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity[level] })
-    if count > 0 then
+    local count = diag_count[vim.diagnostic.severity[level]]
+    if count then
       diag[#diag + 1] = string.format("%s%d", k, count)
     end
   end
