@@ -34,7 +34,7 @@ A simple statusline for neovim written in lua.
 require("zenline").setup()
 ```
 ### Click to see default configuration
- Default configuration is here [options](https://github.com/abhilash26/zenline.nvim/blob/main/lua/zenline/default_options.lua)
+ Default configuration is here [options](https://github.com/abhilash26/zenline.nvim/blob/main/lua/zenline/config.lua)
 
 
 ## Sections
