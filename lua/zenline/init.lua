@@ -12,10 +12,14 @@ local cache_mode = {}
 local cache_diag = {}
 local cache_diff = {}
 local cache_special = {}
+local comp = {}
+local zenhl = ""
 
 -- Cache vim.api global
 local api = vim.api
 local o = default_options
+local bo = vim.bo
+local diagnostic = vim.diagnostic
 
 local hl_txt = function(hl)
   return hls[hl] and hls[hl].txt or string.format("%%#%s#", hl)
@@ -31,23 +35,23 @@ C.mode = function()
 end
 
 C.file_name = function()
-  local fo = o.components.file_name
+  local fo = comp.file_name
   local fpath = vim.fn.fnamemodify(vim.fn.expand("%"), fo.mod)
-  local modified = vim.bo.mod and fo.modified or ""
-  local readonly = vim.bo.readonly and fo.readonly or ""
+  local modified = bo.mod and fo.modified or ""
+  local readonly = bo.readonly and fo.readonly or ""
   return string.format("%s%s%s", fpath, modified, readonly)
 end
 
 C.file_type = function()
-  return vim.bo.filetype
+  return bo.filetype
 end
 
 C.diagnostics = function()
   local diag = {}
-  local count_diag = vim.diagnostic.count(0)
+  local count_diag = diagnostic.count(0)
 
   for level, k in pairs(cache_diag) do
-    local count = count_diag[vim.diagnostic.severity[level]]
+    local count = count_diag[diagnostic.severity[level]]
     if count then
       diag[#diag + 1] = string.format("%s%d", k, count)
     end
@@ -58,12 +62,7 @@ end
 C.git_branch = function()
   local git_branch = vim.b.gitsigns_head
   return git_branch
-      and string.format(
-        "%s%s%s",
-        o.components.git_branch.icon,
-        hls["ZenlineAccent"].txt,
-        git_branch
-      )
+      and string.format("%s%s%s", comp.git_branch.icon, zenhl, git_branch)
     or ""
 end
 
@@ -83,7 +82,7 @@ C.git_diff = function()
 end
 
 C.line_column = function()
-  return o.components.line_column.text
+  return comp.line_column.text
 end
 
 M = {}
@@ -91,6 +90,7 @@ M = {}
 M.merge_config = function(opts)
   -- prefer users config over default
   o = vim.tbl_deep_extend("force", default_options, opts or {})
+  comp = o.components
 end
 
 M.define_highlights = function()
@@ -113,7 +113,6 @@ M.define_highlights = function()
     ["ZenlineTerminal"] = { link = "Comment", flip = true },
     ["ZenlineAccent"] = { link = "StatusLine", flip = false },
   }
-
   for hl, data in pairs(hls) do
     local hl_data = get_hl(0, { name = data.link })
     if data.flip then
@@ -123,6 +122,7 @@ M.define_highlights = function()
     end
     hls[hl].txt = string.format("%%#%s#", hl)
   end
+  zenhl = "%#ZenlineAccent#"
 end
 
 M.active = function()
@@ -159,39 +159,30 @@ M.set_statusline = function()
   end
 end
 
-M.cache_mode = function()
-  for key, value in pairs(o.components.mode) do
-    cache_mode[key] = string.format("%s %s", hl_txt(value[1]), value[2])
-  end
-end
+M.cache_components = function()
+  local no_hl = { mode = true, diagnostics = true, git_diff = true }
+  sects = { zenhl }
 
-M.cache_diagnostics = function()
-  for severity, t in pairs(o.components.diagnostics) do
+  -- cache mode
+  for mkey, m in pairs(comp.mode) do
+    cache_mode[mkey] = string.format("%s %s", hl_txt(m[1]), m[2])
+  end
+  -- cache diagnostics
+  for severity, t in pairs(comp.diagnostics) do
     cache_diag[severity] = string.format("%s%s", hl_txt(t[1]), t[2])
   end
-end
-
-M.cache_git_diff = function()
-  for key, value in pairs(o.components.git_diff) do
-    cache_diff[key] = string.format("%s%s", hl_txt(value[1]), value[2])
+  -- cache git_diff
+  for key, v in pairs(comp.git_diff) do
+    cache_diff[key] = string.format("%s%s", hl_txt(v[1]), v[2])
   end
-end
-
-M.cache_special = function()
-  local hl = hls["ZenlineAccent"].txt
-  for ft, data in pairs(o.special_fts) do
-    cache_special[ft] = table.concat({ hl, "%=", data[2], data[1], "%=" }, "")
+  -- cache special_fts
+  for ft, d in pairs(o.special_fts) do
+    cache_special[ft] = table.concat({ zenhl, "%=", d[2], d[1], "%=" }, "")
   end
-end
-
-M.cache_active_sections = function()
-  local no_hl = { mode = true, diagnostics = true, git_diff = true }
-  local zenlineaccent_hl = hls["ZenlineAccent"].txt
-  sects = { zenlineaccent_hl }
-
+  -- cache active sections
   for _, pos in ipairs({ "left", "center", "right" }) do
     for _, sec in ipairs(o.sections.active[pos]) do
-      local c = o.components[sec]
+      local c = comp[sec]
       if c then
         if not no_hl[sec] then
           sects[#sects + 1] = hl_txt(c.hl)
@@ -202,7 +193,7 @@ M.cache_active_sections = function()
       end
     end
     if pos ~= "right" then
-      sects[#sects + 1] = zenlineaccent_hl
+      sects[#sects + 1] = zenhl
       sects[#sects + 1] = "%="
     end
   end
@@ -218,7 +209,6 @@ M.create_autocommands = function()
     callback = isglobal and M.set_global_statusline or M.set_statusline,
     desc = "set statusline",
   })
-
   -- redefine highlights on colorscheme change
   api.nvim_create_autocmd({ "ColorScheme" }, {
     group = augroup,
@@ -238,11 +228,7 @@ M.setup = function(opts)
   M.merge_config(opts)
   M.define_highlights()
   -- perf: set cache to improve performance
-  M.cache_mode()
-  M.cache_diagnostics()
-  M.cache_git_diff()
-  M.cache_active_sections()
-  M.cache_special()
+  M.cache_components()
   M.create_autocommands()
   -- set statusline
   vim.g.statusline = status_active
