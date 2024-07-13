@@ -7,16 +7,16 @@ return {
       right = {
         "diagnostics",
         "file_type",
-        "line_column"
+        "line_column",
       },
     },
     inactive = {
       hl = "Normal",
       text = "%F%=",
-    }
+    },
   },
   components = {
-    mode        = {
+    mode = {
       ["n"] = { "ZenlineNormal", "NORMAL" },
       ["i"] = { "ZenlineInsert", "INSERT" },
       ["ic"] = { "ZenlineInsert", "INSERT" },
@@ -26,10 +26,10 @@ return {
       ["c"] = { "ZenlineCmdLine", "COMMAND" },
       ["R"] = { "ZenlineReplace", "REPLACE" },
       ["t"] = { "ZenlineTerminal", "TERMINAL" },
-      default = { "Normal", "UNKNOWN" }
+      default = { "Normal", "UNKNOWN" },
     },
-    file_type   = { hl = "ZenlineAccent", },
-    file_name   = {
+    file_type = { hl = "ZenlineAccent" },
+    file_name = {
       hl = "ZenlineAccent",
       mod = ":~:.",
       modified = " [+] ",
@@ -45,11 +45,11 @@ return {
       hl = "ZenlineNormal",
       text = "%P %l:%c ",
     },
-    git_branch  = {
+    git_branch = {
       hl = "ZenlineAccent",
-      icon = " "
+      icon = " ",
     },
-    git_diff    = {
+    git_diff = {
       ["added"] = { "ZenlineAdd", " " },
       ["changed"] = { "ZenlineChange", " " },
       ["removed"] = { "ZenlineDelete", " " },
@@ -69,5 +69,5 @@ return {
     ["man"] = { "Man", " " },
     ["qt"] = { "Quickfix", " " },
     ["toggleterm"] = { "ToggleTerm", " " },
-  }
+  },
 }
