@@ -2,35 +2,20 @@
 
 -- default options
 local plugin_loaded = false
-local active_sects = {}
-local compute_idx = {}
+local sects = {}
+local hls = {}
 local default_options = require("zenline.config")
-local o = {}
 local status_active = "%{%v:lua.Zenline.active()%}"
 local status_inactive = "%{%v:lua.Zenline.inactive()%}"
-local mode_cache = {}
-local diag_cache = {}
-local diff_cache = {}
-local special_cache = {}
-local hls = {
-  ["ZenlineError"] = { link = "DiagnosticError", flip = false, txt = "%#ZenlineError#" },
-  ["ZenlineWarn"] = { link = "DiagnosticWarn", flip = false, txt = "%#ZenlineWarn#" },
-  ["ZenlineInfo"] = { link = "DiagnosticInfo", flip = false, txt = "%#ZenlineInfo#" },
-  ["ZenlineHint"] = { link = "DiagnosticHint", flip = false, txt = "%#ZenlineHint#" },
-  ["ZenlineAdd"] = { link = "SignAdd", flip = false, txt = "%#ZenlineAdd#" },
-  ["ZenlineChange"] = { link = "SignChange", flip = false, txt = "%#ZenlineChange#" },
-  ["ZenlineDelete"] = { link = "SignDelete", flip = false, txt = "%#ZenlineDelete#" },
-  ["ZenlineNormal"] = { link = "Function", flip = true, txt = "%#ZenlineNormal#" },
-  ["ZenlineInsert"] = { link = "String", flip = true, txt = "%#ZenlineInsert#" },
-  ["ZenlineVisual"] = { link = "Special", flip = true, txt = "%#ZenlineVisual#" },
-  ["ZenlineCmdLine"] = { link = "Constant", flip = true, txt = "%#ZenlineCmdLine#" },
-  ["ZenlineReplace"] = { link = "Identifier", flip = true, txt = "%#ZenlineReplace#" },
-  ["ZenlineTerminal"] = { link = "Comment", flip = true, txt = "%#ZenlineTerminal#" },
-  ["ZenlineAccent"] = { link = "StatusLine", flip = false, txt = "%#ZenlineAccent#" },
-}
+local cache_idx = {}
+local cache_mode = {}
+local cache_diag = {}
+local cache_diff = {}
+local cache_special = {}
 
 -- Cache vim.api global
 local api = vim.api
+local o = default_options
 
 local hl_txt = function(hl)
   return hls[hl] and hls[hl].txt or string.format("%%#%s#", hl)
@@ -42,7 +27,7 @@ C = {}
 -- mode component
 C.mode = function()
   local m = api.nvim_get_mode().mode
-  return mode_cache[m] or mode_cache["default"]
+  return cache_mode[m] or cache_mode["default"]
 end
 
 C.file_name = function()
@@ -59,10 +44,10 @@ end
 
 C.diagnostics = function()
   local diag = {}
-  local diag_count = vim.diagnostic.count(0)
+  local count_diag = vim.diagnostic.count(0)
 
-  for level, k in pairs(diag_cache) do
-    local count = diag_count[vim.diagnostic.severity[level]]
+  for level, k in pairs(cache_diag) do
+    local count = count_diag[vim.diagnostic.severity[level]]
     if count then
       diag[#diag + 1] = string.format("%s%d", k, count)
     end
@@ -72,15 +57,23 @@ end
 
 C.git_branch = function()
   local git_branch = vim.b.gitsigns_head
-  if not git_branch then return "" end
-  return string.format("%s%s%s", o.components.git_branch.icon, hls["ZenlineAccent"].txt, git_branch)
+  return git_branch
+      and string.format(
+        "%s%s%s",
+        o.components.git_branch.icon,
+        hls["ZenlineAccent"].txt,
+        git_branch
+      )
+    or ""
 end
 
 C.git_diff = function()
   local diff = vim.b.gitsigns_status_dict
-  if not diff then return "" end
+  if not diff then
+    return ""
+  end
   local diff_text = {}
-  for type, k in pairs(diff_cache) do
+  for type, k in pairs(cache_diff) do
     local count = diff[type]
     if count and count > 0 then
       diff_text[#diff_text + 1] = string.format("%s%s", k, count)
@@ -104,6 +97,22 @@ M.define_highlights = function()
   local get_hl = api.nvim_get_hl
   local set_hl = api.nvim_set_hl
   local status = get_hl(0, { name = "StatusLine" })
+  hls = {
+    ["ZenlineError"] = { link = "DiagnosticError", flip = false },
+    ["ZenlineWarn"] = { link = "DiagnosticWarn", flip = false },
+    ["ZenlineInfo"] = { link = "DiagnosticInfo", flip = false },
+    ["ZenlineHint"] = { link = "DiagnosticHint", flip = false },
+    ["ZenlineAdd"] = { link = "SignAdd", flip = false },
+    ["ZenlineChange"] = { link = "SignChange", flip = false },
+    ["ZenlineDelete"] = { link = "SignDelete", flip = false },
+    ["ZenlineNormal"] = { link = "Function", flip = true },
+    ["ZenlineInsert"] = { link = "String", flip = true },
+    ["ZenlineVisual"] = { link = "Special", flip = true },
+    ["ZenlineCmdLine"] = { link = "Constant", flip = true },
+    ["ZenlineReplace"] = { link = "Identifier", flip = true },
+    ["ZenlineTerminal"] = { link = "Comment", flip = true },
+    ["ZenlineAccent"] = { link = "StatusLine", flip = false },
+  }
 
   for hl, data in pairs(hls) do
     local hl_data = get_hl(0, { name = data.link })
@@ -112,16 +121,17 @@ M.define_highlights = function()
     else
       set_hl(0, hl, { fg = hl_data.fg, bg = status.bg })
     end
+    hls[hl].txt = string.format("%%#%s#", hl)
   end
 end
 
 M.active = function()
-  for i = 1, #compute_idx, 2 do
-    local idx = compute_idx[i]
-    local component = compute_idx[i + 1]
-    active_sects[idx] = C[component]()
+  for i = 1, #cache_idx, 2 do
+    local idx = cache_idx[i]
+    local component = cache_idx[i + 1]
+    sects[idx] = C[component]()
   end
-  return table.concat(active_sects, " ")
+  return table.concat(sects, " ")
 end
 
 M.inactive = function()
@@ -132,7 +142,7 @@ M.set_global_statusline = function()
   local cur_win = api.nvim_get_current_win()
   local ft = vim.bo.ft
   local ft_opts = o.special_fts[ft]
-  vim.wo[cur_win].statusline = ft_opts and special_cache[ft] or status_active
+  vim.wo[cur_win].statusline = ft_opts and cache_special[ft] or status_active
 end
 
 M.set_statusline = function()
@@ -141,7 +151,8 @@ M.set_statusline = function()
     if cur_win == w then
       local ft = vim.bo.ft
       local ft_opts = o.special_fts[ft]
-      vim.wo[cur_win].statusline = ft_opts and special_cache[ft] or status_active
+      vim.wo[cur_win].statusline = ft_opts and cache_special[ft]
+        or status_active
     else
       vim.wo[w].statusline = status_inactive
     end
@@ -150,51 +161,49 @@ end
 
 M.cache_mode = function()
   for key, value in pairs(o.components.mode) do
-    mode_cache[key] = string.format("%s %s", hl_txt(value[1]), value[2])
+    cache_mode[key] = string.format("%s %s", hl_txt(value[1]), value[2])
   end
 end
 
 M.cache_diagnostics = function()
   for severity, t in pairs(o.components.diagnostics) do
-    diag_cache[severity] = string.format("%s%s", hl_txt(t[1]), t[2])
+    cache_diag[severity] = string.format("%s%s", hl_txt(t[1]), t[2])
   end
 end
 
 M.cache_git_diff = function()
   for key, value in pairs(o.components.git_diff) do
-    diff_cache[key] = string.format("%s%s", hl_txt(value[1]), value[2])
+    cache_diff[key] = string.format("%s%s", hl_txt(value[1]), value[2])
   end
 end
 
 M.cache_special = function()
   local hl = hls["ZenlineAccent"].txt
   for ft, data in pairs(o.special_fts) do
-    special_cache[ft] = table.concat({ hl, "%=", data[2], data[1], "%=" }, "")
+    cache_special[ft] = table.concat({ hl, "%=", data[2], data[1], "%=" }, "")
   end
 end
 
 M.cache_active_sections = function()
-  local no_hl = {
-    mode = true,
-    diagnostics = true,
-    git_diff = true,
-  }
-  active_sects[#active_sects + 1] = hls["ZenlineAccent"].txt
+  local no_hl = { mode = true, diagnostics = true, git_diff = true }
+  local zenlineaccent_hl = hls["ZenlineAccent"].txt
+  sects = { zenlineaccent_hl }
+
   for _, pos in ipairs({ "left", "center", "right" }) do
-    for _, section in ipairs(o.sections.active[pos]) do
-      local component = o.components[section]
-      if component then
-        if not no_hl[section] then
-          active_sects[#active_sects + 1] = hl_txt(component.hl)
+    for _, sec in ipairs(o.sections.active[pos]) do
+      local c = o.components[sec]
+      if c then
+        if not no_hl[sec] then
+          sects[#sects + 1] = hl_txt(c.hl)
         end
-        compute_idx[#compute_idx + 1] = #active_sects + 1
-        compute_idx[#compute_idx + 1] = section
-        active_sects[#active_sects + 1] = ""
+        cache_idx[#cache_idx + 1] = #sects + 1
+        cache_idx[#cache_idx + 1] = sec
+        sects[#sects + 1] = ""
       end
     end
     if pos ~= "right" then
-      active_sects[#active_sects + 1] = hls["ZenlineAccent"].txt
-      active_sects[#active_sects + 1] = "%="
+      sects[#sects + 1] = zenlineaccent_hl
+      sects[#sects + 1] = "%="
     end
   end
 end
@@ -207,21 +216,23 @@ M.create_autocommands = function()
   api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
     group = augroup,
     callback = isglobal and M.set_global_statusline or M.set_statusline,
-    desc = "set statusline"
+    desc = "set statusline",
   })
 
   -- redefine highlights on colorscheme change
   api.nvim_create_autocmd({ "ColorScheme" }, {
     group = augroup,
     callback = M.define_highlights,
-    desc = "define highlights"
+    desc = "define highlights",
   })
 end
 
 -- setup function
 M.setup = function(opts)
   -- return if setup has already taken place
-  if plugin_loaded then return else plugin_loaded = true end
+  if plugin_loaded then
+    return
+  end
   -- exporting the module
   _G.Zenline = M
   M.merge_config(opts)
@@ -235,6 +246,7 @@ M.setup = function(opts)
   M.create_autocommands()
   -- set statusline
   vim.g.statusline = status_active
+  plugin_loaded = true
 end
 
 return M
