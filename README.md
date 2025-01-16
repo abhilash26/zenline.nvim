@@ -18,16 +18,9 @@ A simple statusline for neovim written in lua.
 ```lua
   {
     "abhilash26/zenline.nvim",
-    opts = {}
+		event = { "WinEnter", "BufEnter", "ColorScheme" },
+    opts = {},
   },
-```
-### Pckr (Spiritual successor of packer)
-```lua
-  { "abhilash26/zenline.nvim",
-    config = function()
-          require("zenline").setup()
-    end
-  };
 ```
 ## Minimum Configuration
 ```lua
